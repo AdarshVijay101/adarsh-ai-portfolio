@@ -15,6 +15,7 @@ app = FastAPI(title="Adarsh-bot API")
 # Initialize Database on Startup
 @app.on_event("startup")
 def on_startup():
+    print(f"DEBUG: STARTING UP. ENV PORT: {os.getenv('PORT')}")
     init_db()
 
 app.add_middleware(
