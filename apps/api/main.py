@@ -19,7 +19,11 @@ def on_startup():
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=[
+        "http://localhost:3000",
+        "https://adarsh-ai-portfolio.vercel.app",
+        "https://*.vercel.app"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -35,6 +39,10 @@ class ChatRequest(BaseModel):
 @app.get("/")
 def read_root():
     return {"status": "ok", "service": "Adarsh-bot API"}
+
+@app.get("/health")
+def health_check():
+    return {"status": "healthy", "service": "Adarsh-bot API"}
 
 @app.post("/chat")
 async def chat_endpoint(req: ChatRequest):
