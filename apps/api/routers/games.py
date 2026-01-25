@@ -133,7 +133,7 @@ async def connect4_move(state: ConnectFourState):
         elif state.provider == "openai":
             system_prompt = "You are GPT-4, a pure logic engine. Analyze the board mathematically and state your probability of winning."
 
-        col, comment = await get_llm_move(state.board, valid_cols, system_prompt)
+        col, comment = await get_llm_move(state.board, valid_cols, system_prompt, state.provider)
         return MoveResponse(col=col, comment=comment)
     
     depth = 2 if state.difficulty == "easy" else 4
@@ -144,11 +144,8 @@ async def connect4_move(state: ConnectFourState):
         
     return MoveResponse(col=col, comment=f"Minimax Engine (Depth {depth}) calculated optimal move: Column {col}")
 
-async def get_llm_move(board, valid_cols, system_prompt):
+async def get_llm_move(board, valid_cols, system_prompt, provider="openai"):
     try:
-        from openai import OpenAI
-        client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-        
         prompt = f"""
         {system_prompt}
         The board is a 6x7 grid (0=Empty, 1=Human, 2=You).
@@ -168,27 +165,64 @@ async def get_llm_move(board, valid_cols, system_prompt):
         }}
         """
         
-        completion = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.7,
-            response_format={"type": "json_object"}
-        )
-        
-        content = completion.choices[0].message.content
-        data = json.loads(content)
+        if provider == "gemini":
+            # Use Google Gemini
+            import google.generativeai as genai
+            genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+            model = genai.GenerativeModel('gemini-1.5-flash')
+            response = model.generate_content(prompt)
+            content = response.text
+            # Clean up potential markdown code blocks
+            if content.startswith("```"):
+                content = content.split("```")[1]
+                if content.startswith("json"):
+                    content = content[4:]
+            data = json.loads(content.strip())
+            
+        elif provider == "grok":
+            # Use xAI Grok (OpenAI-compatible API)
+            from openai import OpenAI
+            client = OpenAI(
+                api_key=os.getenv("XAI_API_KEY"),
+                base_url="https://api.x.ai/v1"
+            )
+            completion = client.chat.completions.create(
+                model="grok-beta",
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.7
+            )
+            content = completion.choices[0].message.content
+            if content.startswith("```"):
+                content = content.split("```")[1]
+                if content.startswith("json"):
+                    content = content[4:]
+            data = json.loads(content.strip())
+            
+        else:
+            # Default: OpenAI
+            from openai import OpenAI
+            client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+            completion = client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.7,
+                response_format={"type": "json_object"}
+            )
+            content = completion.choices[0].message.content
+            data = json.loads(content)
         
         col = data.get("col")
         # Strict validation
         if col not in valid_cols:
              return random.choice(valid_cols), f"{data.get('comment', '')} (Auto-corrected invalid move)"
              
-        comment = f"[{system_prompt.split(',')[0].replace('You are ', '')}]: {data.get('comment', '')}\n\nThinking: {data.get('thinking_process', 'Calculated best move.')}"
+        persona_name = system_prompt.split(',')[0].replace('You are ', '')
+        comment = f"[{persona_name}]: {data.get('comment', '')}\n\nThinking: {data.get('thinking_process', 'Calculated best move.')}"
         return col, comment
         
     except Exception as e:
-        print(f"LLM Error: {e}")
-        return random.choice(valid_cols), "System Warning: Neural Link Disrupted. Falling back to random engine."
+        print(f"LLM Error ({provider}): {e}")
+        return random.choice(valid_cols), f"System Warning: Neural Link to {provider.upper()} Disrupted. Falling back to random engine."
 
 @router.post("/sketch/guess")
 async def sketch_guess(req: SketchRequest):
