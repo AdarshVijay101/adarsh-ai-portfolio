@@ -3,7 +3,7 @@
 **Name**: Adarsh Vijay Krishnakumar
 **Headline**: AI Engineer
 **Location**: Chicago, IL, US
-**Email**: kadarshvijay@gmail.com
+**Email**: adarshvkrish08@gmail.com
 **LinkedIn**: [linkedin.com/in/adarshvijaykrishnakumar](https://linkedin.com/in/adarshvijaykrishnakumar)
 **GitHub**: [github.com/AdarshVijay101](https://github.com/AdarshVijay101)
 
