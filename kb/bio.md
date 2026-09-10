@@ -1,11 +1,11 @@
 # Bio & Contact Info
 
 **Name**: Adarsh Vijay Krishnakumar
-**Headline**: Business Analyst (Data & Quantitative Analysis) | AI Engineer
+**Headline**: AI Engineer
 **Location**: Chicago, IL, US
 **Email**: kadarshvijay@gmail.com
 **LinkedIn**: [linkedin.com/in/adarshvijaykrishnakumar](https://linkedin.com/in/adarshvijaykrishnakumar)
 **GitHub**: [github.com/AdarshVijay101](https://github.com/AdarshVijay101)
 
 ## Summary
-Business Analyst and AI Engineer with 3+ years of experience delivering data-driven insights and automation. Specialized in Data Governance, Integrity Controls, and Agentic AI. Built tools for deterministic AI-to-SQL and RAG workflows. Deep domain exposure to financial services reporting patterns. Focused on accuracy-first delivery and continuous improvement.
+Machine Learning Engineer / AI Engineer with 4+ years of applied data, machine learning, and AI work across professional roles, graduate study, and production-focused engineering projects from 2021–present. Progressed from healthcare data analytics into cloud data science/data engineering and then GenAI/agentic AI engineering. Hands-on experience building Python/SQL data pipelines, Spark/Databricks workflows, supervised and unsupervised ML, time-series forecasting, model explainability, REST APIs, RAG systems, LLM agents, tool/function calling, structured-output validation, and MLOps automation. Strong Azure foundation with additional AWS/GCP exposure; comfortable taking solutions from data ingestion and feature engineering through experimentation, deployment, evaluation, monitoring, and stakeholder-facing analytics.
